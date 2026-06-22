@@ -51,6 +51,16 @@ namespace RestoFlow.Services.Implementations
             return await _db.Users.FirstOrDefaultAsync(u => u.Username == name);
         }
 
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return null;
+            }
+
+            return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task UpdateAsync(User user, string? plainPassword = null)
         {
             if (!string.IsNullOrEmpty(plainPassword))

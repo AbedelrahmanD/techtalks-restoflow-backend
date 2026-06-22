@@ -10,5 +10,6 @@ namespace RestoFlow.Services.Interfaces
         Task UpdateAsync(User user, string? plainPassword = null);
         Task DeleteAsync(int id);
         Task<User?> GetByNameAsync(string name);
+        Task<User?> GetByEmailAsync(string email);
     }
 }

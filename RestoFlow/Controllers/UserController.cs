@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 using RestoFlow.Models;
 using RestoFlow.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +31,9 @@ namespace RestoFlow.Controllers
                 Username = u.Username,
                 CreatedAt = u.CreatedAt,
                 UpdatedAt = u.UpdatedAt,
-                Role = u.Role
+                Role = u.Role,
+                Email = u.Email,
+                Phone = u.Phone
             });
 
             return Ok(dto);
@@ -49,7 +53,9 @@ namespace RestoFlow.Controllers
                 Username = user.Username,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
-                Role = user.Role
+                Role = user.Role,
+                Email = user.Email,
+                Phone = user.Phone
             };
             return Ok(dto);
         }
@@ -64,10 +70,22 @@ namespace RestoFlow.Controllers
                 return Conflict(new ErrorResponseDto { Message = "Username already exists", Key = "username_taken" });
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Email))
+            {
+                var existingEmail = await _service.GetByEmailAsync(request.Email!);
+                if (existingEmail != null)
+                {
+                    return Conflict(new ErrorResponseDto { Message = "Email already exists", Key = "email_taken" });
+                }
+            }
+
             var user = new User
             {
                 Username = request.Username,
                 Role = request.Role
+                ,
+                Email = request.Email,
+                Phone = request.Phone
             };
 
             var created = await _service.CreateAsync(user, request.Password);
@@ -78,7 +96,9 @@ namespace RestoFlow.Controllers
                 Username = created.Username,
                 CreatedAt = created.CreatedAt,
                 UpdatedAt = created.UpdatedAt,
-                Role = created.Role
+                Role = created.Role,
+                Email = created.Email,
+                Phone = created.Phone
             };
 
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
@@ -103,8 +123,24 @@ namespace RestoFlow.Controllers
                 }
             }
 
+            // if email provided and changed ensure uniqueness
+            var newEmail = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email;
+            if (!string.Equals(existing.Email, newEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrWhiteSpace(newEmail))
+                {
+                    var otherByEmail = await _service.GetByEmailAsync(newEmail!);
+                    if (otherByEmail != null && otherByEmail.Id != id)
+                    {
+                        return Conflict(new ErrorResponseDto { Message = "Email already exists", Key = "email_taken" });
+                    }
+                }
+            }
+
             existing.Username = request.Username;
             existing.Role = request.Role;
+            existing.Email = newEmail;
+            existing.Phone = request.Phone;
 
             var plainPassword = string.IsNullOrWhiteSpace(request.Password) ? null : request.Password;
 
