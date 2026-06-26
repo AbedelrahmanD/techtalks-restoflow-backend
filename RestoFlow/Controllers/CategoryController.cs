@@ -9,7 +9,7 @@ namespace RestoFlow.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
@@ -55,17 +55,15 @@ namespace RestoFlow.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] CategoryCreateDto request)
+        public async Task<IActionResult> Create([FromForm] CategoryCreateDto request)
         {
             var category = new Category
             {
                 Name = request.Name,
-                ImageUrl = request.ImageUrl,
                 IsActive = request.IsActive
             };
 
-            var created = await _service.CreateAsync(category);
+            var created = await _service.CreateAsync(category, request.Image);
 
             var dto = new CategoryResponseDto
             {
@@ -79,8 +77,7 @@ namespace RestoFlow.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] CategoryUpdateDto request)
+        public async Task<IActionResult> Update(int id, [FromForm] CategoryUpdateDto request)
         {
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
@@ -89,15 +86,13 @@ namespace RestoFlow.Controllers
             }
 
             existing.Name = request.Name;
-            existing.ImageUrl = request.ImageUrl;
             existing.IsActive = request.IsActive;
 
-            await _service.UpdateAsync(existing);
+            await _service.UpdateAsync(existing, request.Image);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _service.GetByIdAsync(id);

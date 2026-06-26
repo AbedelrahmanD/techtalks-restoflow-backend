@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace RestoFlow.Dtos.Requests
@@ -8,8 +9,7 @@ namespace RestoFlow.Dtos.Requests
         [StringLength(150, MinimumLength = 2)]
         public string Name { get; set; }
 
-        [StringLength(500)]
-        public string? ImageUrl { get; set; }
+        public IFormFile? Image { get; set; }
 
         public bool IsActive { get; set; } = true;
     }
