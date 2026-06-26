@@ -10,7 +10,7 @@ namespace RestoFlow.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-  // [Authorize(Roles = "Admin")]
+   [Authorize(Roles = "Admin")]
     public class SettingsController : ControllerBase
     {
         private readonly ISettingService _service;
