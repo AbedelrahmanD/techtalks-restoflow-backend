@@ -5,6 +5,7 @@ using RestoFlow.Data;
 using RestoFlow.Services;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services.Implementations;
+using RestoFlow.OpenApi;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IDiningTableService, DiningTableService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -38,7 +40,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
