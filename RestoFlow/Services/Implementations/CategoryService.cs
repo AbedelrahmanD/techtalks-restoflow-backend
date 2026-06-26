@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RestoFlow.Data;
+using RestoFlow.Helpers;
 using RestoFlow.Models;
 using RestoFlow.Services.Interfaces;
 
@@ -7,6 +9,9 @@ namespace RestoFlow.Services.Implementations
 {
     public class CategoryService : ICategoryService
     {
+        private static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+        private const long MaxImageBytes = 2 * 1024 * 1024; // 2 MB
+
         private readonly AppDbContext _db;
 
         public CategoryService(AppDbContext db)
@@ -24,17 +29,34 @@ namespace RestoFlow.Services.Implementations
             return await _db.Categories.FindAsync(id);
         }
 
-        public async Task<Category> CreateAsync(Category category)
+        public async Task<Category> CreateAsync(Category category, IFormFile? imageFile = null)
         {
+            if (imageFile != null)
+            {
+                category.ImageUrl = await SaveImageAsync(imageFile);
+            }
+
             _db.Categories.Add(category);
             await _db.SaveChangesAsync();
             return category;
         }
 
-        public async Task UpdateAsync(Category category)
+        public async Task UpdateAsync(Category category, IFormFile? imageFile = null)
         {
+            if (imageFile != null)
+            {
+                category.ImageUrl = await SaveImageAsync(imageFile);
+            }
+
             _db.Categories.Update(category);
             await _db.SaveChangesAsync();
+        }
+
+        private static async Task<string> SaveImageAsync(IFormFile imageFile)
+        {
+            var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Categories");
+            var saved = await FileHelper.SaveFileAsync(imageFile, uploadsRoot, AllowedImageExtensions, MaxImageBytes);
+            return Path.Combine("Uploads", "Categories", saved).Replace('\\', '/');
         }
 
         public async Task DeleteAsync(int id)

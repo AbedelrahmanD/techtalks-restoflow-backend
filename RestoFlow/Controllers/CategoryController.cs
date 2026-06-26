@@ -9,7 +9,7 @@ namespace RestoFlow.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
@@ -55,32 +55,46 @@ namespace RestoFlow.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] CategoryCreateDto request)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Create([FromForm] CategoryCreateDto request)
         {
             var category = new Category
             {
                 Name = request.Name,
-                ImageUrl = request.ImageUrl,
                 IsActive = request.IsActive
             };
 
-            var created = await _service.CreateAsync(category);
-
-            var dto = new CategoryResponseDto
+            try
             {
-                Id = created.Id,
-                Name = created.Name,
-                ImageUrl = created.ImageUrl,
-                IsActive = created.IsActive
-            };
+                var created = await _service.CreateAsync(category, request.Image);
 
-            return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
+                var dto = new CategoryResponseDto
+                {
+                    Id = created.Id,
+                    Name = created.Name,
+                    ImageUrl = created.ImageUrl,
+                    IsActive = created.IsActive
+                };
+
+                return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new ErrorResponseDto { Message = ex.Message, Key = "file_required" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new ErrorResponseDto { Message = ex.Message, Key = "invalid_file" });
+            }
+            catch (IOException)
+            {
+                return StatusCode(500, new ErrorResponseDto { Message = "Could not save file", Key = "file_save_failed" });
+            }
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] CategoryUpdateDto request)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Update(int id, [FromForm] CategoryUpdateDto request)
         {
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
@@ -89,15 +103,24 @@ namespace RestoFlow.Controllers
             }
 
             existing.Name = request.Name;
-            existing.ImageUrl = request.ImageUrl;
             existing.IsActive = request.IsActive;
 
-            await _service.UpdateAsync(existing);
-            return NoContent();
+            try
+            {
+                await _service.UpdateAsync(existing, request.Image);
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new ErrorResponseDto { Message = ex.Message, Key = "invalid_file" });
+            }
+            catch (IOException)
+            {
+                return StatusCode(500, new ErrorResponseDto { Message = "Could not save file", Key = "file_save_failed" });
+            }
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var existing = await _service.GetByIdAsync(id);
