@@ -9,7 +9,7 @@ using RestoFlow.OpenApi;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+ 
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -56,7 +56,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/openapi/v1.json", "API V1");
+        options.SwaggerEndpoint("/openapi/v1.json", "API V1 To Test");
     });
 }
 
