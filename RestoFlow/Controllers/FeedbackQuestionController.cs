@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
 using RestoFlow.Models;
@@ -13,10 +14,12 @@ namespace RestoFlow.Controllers
     public class FeedbackQuestionController : ControllerBase
     {
         private readonly IFeedbackQuestionService _service;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public FeedbackQuestionController(IFeedbackQuestionService service)
+        public FeedbackQuestionController(IFeedbackQuestionService service, IStringLocalizer<SharedResource> localizer)
         {
             _service = service;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -39,7 +42,7 @@ namespace RestoFlow.Controllers
             var question = await _service.GetByIdAsync(id);
             if (question == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Feedback question not found", Key = "feedback_question_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["feedback_question_not_found"], Key = "feedback_question_not_found" });
             }
 
             var dto = new FeedbackQuestionResponseDto
@@ -79,7 +82,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Feedback question not found", Key = "feedback_question_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["feedback_question_not_found"], Key = "feedback_question_not_found" });
             }
 
             existing.Question = request.Question;
@@ -95,7 +98,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Feedback question not found", Key = "feedback_question_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["feedback_question_not_found"], Key = "feedback_question_not_found" });
             }
 
             await _service.DeleteAsync(id);

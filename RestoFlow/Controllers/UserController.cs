@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Linq;
 using RestoFlow.Models;
@@ -15,10 +16,12 @@ namespace RestoFlow.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public UserController(IUserService service)
+        public UserController(IUserService service, IStringLocalizer<SharedResource> localizer)
         {
             _service = service;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -45,7 +48,7 @@ namespace RestoFlow.Controllers
             var user = await _service.GetByIdAsync(id);
             if (user == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "User not found", Key = "user_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["user_not_found"], Key = "user_not_found" });
             }
             var dto = new UserResponseDto
             {
@@ -67,7 +70,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByNameAsync(request.Username);
             if (existing != null)
             {
-                return Conflict(new ErrorResponseDto { Message = "Username already exists", Key = "username_taken" });
+                return Conflict(new ErrorResponseDto { Message = _localizer["username_taken"], Key = "username_taken" });
             }
 
             if (!string.IsNullOrWhiteSpace(request.Email))
@@ -75,7 +78,7 @@ namespace RestoFlow.Controllers
                 var existingEmail = await _service.GetByEmailAsync(request.Email!);
                 if (existingEmail != null)
                 {
-                    return Conflict(new ErrorResponseDto { Message = "Email already exists", Key = "email_taken" });
+                    return Conflict(new ErrorResponseDto { Message = _localizer["email_taken"], Key = "email_taken" });
                 }
             }
 
@@ -110,7 +113,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "User not found", Key = "user_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["user_not_found"], Key = "user_not_found" });
             }
 
             // if username changed ensure uniqueness
@@ -119,7 +122,7 @@ namespace RestoFlow.Controllers
                 var other = await _service.GetByNameAsync(request.Username);
                 if (other != null && other.Id != id)
                 {
-                    return Conflict(new ErrorResponseDto { Message = "Username already exists", Key = "username_taken" });
+                    return Conflict(new ErrorResponseDto { Message = _localizer["username_taken"], Key = "username_taken" });
                 }
             }
 
@@ -132,7 +135,7 @@ namespace RestoFlow.Controllers
                     var otherByEmail = await _service.GetByEmailAsync(newEmail!);
                     if (otherByEmail != null && otherByEmail.Id != id)
                     {
-                        return Conflict(new ErrorResponseDto { Message = "Email already exists", Key = "email_taken" });
+                        return Conflict(new ErrorResponseDto { Message = _localizer["email_taken"], Key = "email_taken" });
                     }
                 }
             }
@@ -154,7 +157,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "User not found", Key = "user_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["user_not_found"], Key = "user_not_found" });
             }
             await _service.DeleteAsync(id);
             return NoContent();

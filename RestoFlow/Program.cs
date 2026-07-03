@@ -7,6 +7,9 @@ using RestoFlow.Services.Interfaces;
 using RestoFlow.Services.Implementations;
 using RestoFlow.OpenApi;
 using System.Text;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +42,14 @@ builder.Services.AddAuthentication(options =>
 
 
 
+// Localization: resources are placed under Resources/ and shared via SharedResource
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization(options =>
+    {
+        options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(RestoFlow.SharedResource));
+    });
 builder.Services.AddAuthorization();
-builder.Services.AddControllers();
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
@@ -62,7 +71,18 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
 app.UseHttpsRedirection();
+
+// Configure request localization early in the pipeline
+var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ar") };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures.ToList(),
+    SupportedUICultures = supportedCultures.ToList()
+};
+app.UseRequestLocalization(localizationOptions);
 
 app.UseAuthentication();
 

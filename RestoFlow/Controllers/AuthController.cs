@@ -4,6 +4,8 @@ using RestoFlow.Dtos.Responses;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services;
 using BCrypt.Net;
+using Microsoft.Extensions.Localization;
+using RestoFlow;
 
 namespace RestoFlow.Controllers
 {
@@ -13,11 +15,13 @@ namespace RestoFlow.Controllers
     {
         private readonly IUserService _userService;
         private readonly TokenService _tokenService;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public AuthController(IUserService userService, TokenService tokenService)
+        public AuthController(IUserService userService, TokenService tokenService, IStringLocalizer<SharedResource> localizer)
         {
             _userService = userService;
             _tokenService = tokenService;
+            _localizer = localizer;
         }
 
         [HttpPost("login")]
@@ -26,13 +30,13 @@ namespace RestoFlow.Controllers
             var user = await _userService.GetByNameAsync(request.Username);
             if (user == null)
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Invalid credentials", Key = "invalid_credentials" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["invalid_credentials"], Key = "invalid_credentials" });
             }
 
             var verified = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             if (!verified)
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Invalid credentials", Key = "invalid_credentials" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["invalid_credentials"], Key = "invalid_credentials" });
             }
 
             var token = _tokenService.GenerateToken(user.Id.ToString(), user.Role.ToString());

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
 using RestoFlow.Models;
@@ -13,10 +14,12 @@ namespace RestoFlow.Controllers
     public class DiningTableController : ControllerBase
     {
         private readonly IDiningTableService _service;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public DiningTableController(IDiningTableService service)
+        public DiningTableController(IDiningTableService service, IStringLocalizer<SharedResource> localizer)
         {
             _service = service;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -38,7 +41,7 @@ namespace RestoFlow.Controllers
         {
             var table = await _service.GetByIdAsync(id);
             if (table == null)
-                return NotFound(new ErrorResponseDto { Message = "Table not found", Key = "table_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["table_not_found"], Key = "table_not_found" });
 
             return Ok(new DiningTableResponseDto
             {
@@ -77,7 +80,7 @@ namespace RestoFlow.Controllers
         {
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
-                return NotFound(new ErrorResponseDto { Message = "Table not found", Key = "table_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["table_not_found"], Key = "table_not_found" });
 
             existing.TableNumber = request.TableNumber;
             existing.SeatingCapacity = request.SeatingCapacity;
@@ -92,7 +95,7 @@ namespace RestoFlow.Controllers
         {
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
-                return NotFound(new ErrorResponseDto { Message = "Table not found", Key = "table_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["table_not_found"], Key = "table_not_found" });
 
             await _service.DeleteAsync(id);
             return NoContent();
