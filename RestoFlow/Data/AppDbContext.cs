@@ -18,6 +18,7 @@ namespace RestoFlow.Data
         public DbSet<FeedbackSession> FeedbackSessions { get; set; }
         public DbSet<FeedbackResponse> FeedbackResponses { get; set; }
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
