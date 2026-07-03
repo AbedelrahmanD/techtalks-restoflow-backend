@@ -3,6 +3,7 @@ using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services;
+using Microsoft.AspNetCore.Http;
 using BCrypt.Net;
 
 namespace RestoFlow.Controllers
@@ -13,11 +14,15 @@ namespace RestoFlow.Controllers
     {
         private readonly IUserService _userService;
         private readonly TokenService _tokenService;
+        private readonly IRefreshTokenService _refreshService;
 
-        public AuthController(IUserService userService, TokenService tokenService)
+        private const string RefreshCookieName = "refreshToken";
+
+        public AuthController(IUserService userService, TokenService tokenService, IRefreshTokenService refreshService)
         {
             _userService = userService;
             _tokenService = tokenService;
+            _refreshService = refreshService;
         }
 
         [HttpPost("login")]
@@ -37,13 +42,26 @@ namespace RestoFlow.Controllers
 
             var token = _tokenService.GenerateToken(user.Id.ToString(), user.Role.ToString());
 
+            // create refresh token and set as secure HttpOnly cookie
+            var rt = await _refreshService.CreateAsync(user.Id);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = rt.Expires
+            };
+            Response.Cookies.Append(RefreshCookieName, rt.Token, cookieOptions);
+
             var userDto = new UserResponseDto
             {
                 Id = user.Id,
                 Username = user.Username,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
-                Role = user.Role
+                Role = user.Role,
+                Email = user.Email,
+                Phone = user.Phone
             };
 
             var response = new AuthResponseDto
@@ -53,6 +71,71 @@ namespace RestoFlow.Controllers
             };
 
             return Ok(response);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            if (!Request.Cookies.TryGetValue(RefreshCookieName, out var existingToken) || string.IsNullOrEmpty(existingToken))
+            {
+                return Unauthorized(new ErrorResponseDto { Message = "Refresh token missing", Key = "refresh_missing" });
+            }
+
+            var rt = await _refreshService.GetByTokenAsync(existingToken);
+            if (rt == null || rt.Revoked || rt.Expires < DateTime.UtcNow)
+            {
+                return Unauthorized(new ErrorResponseDto { Message = "Invalid refresh token", Key = "invalid_refresh" });
+            }
+
+            var user = rt.User;
+            if (user == null)
+            {
+                return Unauthorized(new ErrorResponseDto { Message = "Invalid refresh token", Key = "invalid_refresh" });
+            }
+
+            // rotate refresh token: revoke old and issue new
+            var newRt = await _refreshService.CreateAsync(user.Id);
+            await _refreshService.RevokeAsync(rt, newRt.Token);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = newRt.Expires
+            };
+            Response.Cookies.Append(RefreshCookieName, newRt.Token, cookieOptions);
+
+            var access = _tokenService.GenerateToken(user.Id.ToString(), user.Role.ToString());
+
+            var userDto = new UserResponseDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                Role = user.Role,
+                Email = user.Email,
+                Phone = user.Phone
+            };
+
+            return Ok(new AuthResponseDto { Token = access, User = userDto });
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            if (Request.Cookies.TryGetValue(RefreshCookieName, out var existingToken) && !string.IsNullOrEmpty(existingToken))
+            {
+                var rt = await _refreshService.GetByTokenAsync(existingToken);
+                if (rt != null)
+                {
+                    await _refreshService.RevokeAsync(rt);
+                }
+            }
+
+            Response.Cookies.Delete(RefreshCookieName);
+            return NoContent();
         }
     }
 }
