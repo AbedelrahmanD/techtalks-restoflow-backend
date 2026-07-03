@@ -5,7 +5,7 @@ namespace RestoFlow.Dtos.Requests
 {
     public class CategoryUpdateDto
     {
-        [Required]
+        [Required(ErrorMessage = "Required")]
         [StringLength(150, MinimumLength = 2)]
         public string Name { get; set; }
 

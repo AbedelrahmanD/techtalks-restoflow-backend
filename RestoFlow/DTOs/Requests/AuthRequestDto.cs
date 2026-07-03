@@ -4,10 +4,10 @@ namespace RestoFlow.Dtos.Requests
 {
     public class AuthRequestDto
     {
-        [Required]
+        [Required(ErrorMessage = "Required")]
         public string Username { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Required")]
         public string Password { get; set; }
     }
 }

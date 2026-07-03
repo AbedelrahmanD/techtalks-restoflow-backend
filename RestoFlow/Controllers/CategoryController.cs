@@ -4,6 +4,7 @@ using RestoFlow.Models;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
+using Microsoft.Extensions.Localization;
 
 namespace RestoFlow.Controllers
 {
@@ -13,10 +14,12 @@ namespace RestoFlow.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public CategoryController(ICategoryService service)
+        public CategoryController(ICategoryService service, IStringLocalizer<SharedResource> localizer)
         {
             _service = service;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -40,7 +43,7 @@ namespace RestoFlow.Controllers
             var category = await _service.GetByIdAsync(id);
             if (category == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Category not found", Key = "category_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["category_not_found"], Key = "category_not_found" });
             }
 
             var dto = new CategoryResponseDto
@@ -82,7 +85,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Category not found", Key = "category_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["category_not_found"], Key = "category_not_found" });
             }
 
             existing.Name = request.Name;
@@ -98,7 +101,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Category not found", Key = "category_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["category_not_found"], Key = "category_not_found" });
             }
 
             await _service.DeleteAsync(id);
