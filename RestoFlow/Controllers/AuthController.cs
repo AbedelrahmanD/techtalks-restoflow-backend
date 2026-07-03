@@ -3,8 +3,7 @@ using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services;
-using Microsoft.AspNetCore.Http;
-using BCrypt.Net;
+using Microsoft.Extensions.Localization;
 
 namespace RestoFlow.Controllers
 {
@@ -15,14 +14,16 @@ namespace RestoFlow.Controllers
         private readonly IUserService _userService;
         private readonly TokenService _tokenService;
         private readonly IRefreshTokenService _refreshService;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         private const string RefreshCookieName = "refreshToken";
 
-        public AuthController(IUserService userService, TokenService tokenService, IRefreshTokenService refreshService)
+        public AuthController(IUserService userService, TokenService tokenService, IRefreshTokenService refreshService, IStringLocalizer<SharedResource> localizer)
         {
             _userService = userService;
             _tokenService = tokenService;
             _refreshService = refreshService;
+            _localizer = localizer;
         }
 
         [HttpPost("login")]
@@ -31,13 +32,13 @@ namespace RestoFlow.Controllers
             var user = await _userService.GetByNameAsync(request.Username);
             if (user == null)
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Invalid credentials", Key = "invalid_credentials" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["invalid_credentials"], Key = "invalid_credentials" });
             }
 
             var verified = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
             if (!verified)
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Invalid credentials", Key = "invalid_credentials" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["invalid_credentials"], Key = "invalid_credentials" });
             }
 
             var token = _tokenService.GenerateToken(user.Id.ToString(), user.Role.ToString());
@@ -78,19 +79,19 @@ namespace RestoFlow.Controllers
         {
             if (!Request.Cookies.TryGetValue(RefreshCookieName, out var existingToken) || string.IsNullOrEmpty(existingToken))
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Refresh token missing", Key = "refresh_missing" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["refresh_missing"], Key = "refresh_missing" });
             }
 
             var rt = await _refreshService.GetByTokenAsync(existingToken);
             if (rt == null || rt.Revoked || rt.Expires < DateTime.UtcNow)
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Invalid refresh token", Key = "invalid_refresh" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["invalid_refresh"], Key = "invalid_refresh" });
             }
 
             var user = rt.User;
             if (user == null)
             {
-                return Unauthorized(new ErrorResponseDto { Message = "Invalid refresh token", Key = "invalid_refresh" });
+                return Unauthorized(new ErrorResponseDto { Message = _localizer["invalid_refresh"], Key = "invalid_refresh" });
             }
 
             // rotate refresh token: revoke old and issue new

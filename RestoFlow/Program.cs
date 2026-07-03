@@ -6,9 +6,16 @@ using RestoFlow.Services;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services.Implementations;
 using RestoFlow.OpenApi;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 using System.Text;
+using System.Linq;
+using RestoFlow;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Localization: point to Resources folder
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 
 builder.Services.AddScoped<TokenService>();
@@ -41,7 +48,9 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddAuthorization();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddDataAnnotationsLocalization(options =>
+        options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(SharedResource)));
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
@@ -53,6 +62,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 var app = builder.Build();
+
+// Configure supported cultures and request localization
+var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ar") };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+    SupportedCultures = supportedCultures.ToList(),
+    SupportedUICultures = supportedCultures.ToList()
+};
+
+app.UseRequestLocalization(localizationOptions);
 
 if (app.Environment.IsDevelopment())
 {

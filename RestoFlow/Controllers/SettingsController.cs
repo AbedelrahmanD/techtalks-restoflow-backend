@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Helpers;
+using Microsoft.Extensions.Localization;
 using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
 using RestoFlow.Models;
@@ -14,10 +15,12 @@ namespace RestoFlow.Controllers
     public class SettingsController : ControllerBase
     {
         private readonly ISettingService _service;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public SettingsController(ISettingService service)
+        public SettingsController(ISettingService service, IStringLocalizer<SharedResource> localizer)
         {
             _service = service;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -26,7 +29,7 @@ namespace RestoFlow.Controllers
             var settings = await _service.GetAsync();
             if (settings == null)
             {
-                return NotFound(new { Message = "Settings not found", Key = "settings_not_found" });
+                return NotFound(new { Message = _localizer["settings_not_found"], Key = "settings_not_found" });
             }
 
             var dto = new SettingResponseDto
@@ -68,22 +71,21 @@ namespace RestoFlow.Controllers
             }
             catch (ArgumentNullException ex)
             {
-                return BadRequest(new ErrorResponseDto { Message = ex.Message, Key = "file_required" });
+                return BadRequest(new ErrorResponseDto { Message = _localizer["file_required"], Key = "file_required" });
             }
             catch (InvalidOperationException ex)
             {
                 var msg = ex.Message ?? "Invalid file";
-                
 
-                return BadRequest(new ErrorResponseDto { Message = msg, Key = "invalid_file" });
+                return BadRequest(new ErrorResponseDto { Message = _localizer["invalid_file"], Key = "invalid_file" });
             }
             catch (IOException)
             {
-                return StatusCode(500, new ErrorResponseDto { Message = "Could not save file", Key = "file_save_failed" });
+                return StatusCode(500, new ErrorResponseDto { Message = _localizer["file_save_failed"], Key = "file_save_failed" });
             }
             catch (Exception)
             {
-                return StatusCode(500, new ErrorResponseDto { Message = "Unexpected error", Key = "server_error" });
+                return StatusCode(500, new ErrorResponseDto { Message = _localizer["server_error"], Key = "server_error" });
             }
         }
     }

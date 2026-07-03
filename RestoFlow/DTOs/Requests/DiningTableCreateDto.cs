@@ -4,12 +4,12 @@ namespace RestoFlow.Dtos.Requests
 {
     public class DiningTableCreateDto
     {
-        [Required]
+        [Required(ErrorMessage = "Required")]
         [StringLength(50)]
         public string TableNumber { get; set; }
 
-        [Required]
-        [Range(1, 100)]
+        [Required(ErrorMessage = "Required")]
+        [Range(1, 100, ErrorMessage = "SeatingCapacityRange")]
         public int SeatingCapacity { get; set; }
     }
 }

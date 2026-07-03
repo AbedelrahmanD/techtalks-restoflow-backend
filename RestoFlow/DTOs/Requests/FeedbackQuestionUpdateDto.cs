@@ -4,7 +4,7 @@ namespace RestoFlow.Dtos.Requests
 {
     public class FeedbackQuestionUpdateDto
     {
-        [Required]
+        [Required(ErrorMessage = "Required")]
         [StringLength(255, MinimumLength = 2)]
         public string Question { get; set; }
 
