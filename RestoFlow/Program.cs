@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 using RestoFlow;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,18 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Prefer token from cookie named 'accessToken', fall back to Authorization header
+            if (context.Request.Cookies.TryGetValue("accessToken", out var cookieToken) && !string.IsNullOrEmpty(cookieToken))
+            {
+                context.Token = cookieToken;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
