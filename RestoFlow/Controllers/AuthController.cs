@@ -4,6 +4,8 @@ using RestoFlow.Dtos.Responses;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace RestoFlow.Controllers
 {
@@ -15,15 +17,18 @@ namespace RestoFlow.Controllers
         private readonly TokenService _tokenService;
         private readonly IRefreshTokenService _refreshService;
         private readonly IStringLocalizer<SharedResource> _localizer;
+        private readonly IConfiguration _config;
 
         private const string RefreshCookieName = "refreshToken";
+        private const string AccessCookieName = "accessToken";
 
-        public AuthController(IUserService userService, TokenService tokenService, IRefreshTokenService refreshService, IStringLocalizer<SharedResource> localizer)
+        public AuthController(IUserService userService, TokenService tokenService, IRefreshTokenService refreshService, IStringLocalizer<SharedResource> localizer, IConfiguration config)
         {
             _userService = userService;
             _tokenService = tokenService;
             _refreshService = refreshService;
             _localizer = localizer;
+            _config = config;
         }
 
         [HttpPost("login")]
@@ -53,6 +58,15 @@ namespace RestoFlow.Controllers
                 Expires = rt.Expires
             };
             Response.Cookies.Append(RefreshCookieName, rt.Token, cookieOptions);
+          
+            var accessCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(double.Parse(_config["JwtSettings:ExpirationInMinutes"]!))
+            };
+            Response.Cookies.Append(AccessCookieName, token, accessCookieOptions);
 
             var userDto = new UserResponseDto
             {
@@ -67,7 +81,6 @@ namespace RestoFlow.Controllers
 
             var response = new AuthResponseDto
             {
-                Token = token,
                 User = userDto
             };
 
@@ -109,6 +122,16 @@ namespace RestoFlow.Controllers
 
             var access = _tokenService.GenerateToken(user.Id.ToString(), user.Role.ToString());
 
+            
+            var accessCookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(double.Parse(_config["JwtSettings:ExpirationInMinutes"]!))
+            };
+            Response.Cookies.Append(AccessCookieName, access, accessCookieOptions);
+
             var userDto = new UserResponseDto
             {
                 Id = user.Id,
@@ -120,7 +143,7 @@ namespace RestoFlow.Controllers
                 Phone = user.Phone
             };
 
-            return Ok(new AuthResponseDto { Token = access, User = userDto });
+            return Ok(new AuthResponseDto { User = userDto });
         }
 
         [HttpPost("logout")]
@@ -136,6 +159,7 @@ namespace RestoFlow.Controllers
             }
 
             Response.Cookies.Delete(RefreshCookieName);
+            Response.Cookies.Delete(AccessCookieName);
             return NoContent();
         }
     }
