@@ -60,6 +60,12 @@ namespace RestoFlow.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CategoryCreateDto request)
         {
+            var existingByName = await _service.GetByNameAsync(request.Name);
+            if (existingByName != null)
+            {
+                return Conflict(new ErrorResponseDto { Message = _localizer["category_name_taken"], Key = "category_name_taken" });
+            }
+
             var category = new Category
             {
                 Name = request.Name,
@@ -73,7 +79,9 @@ namespace RestoFlow.Controllers
                 Id = created.Id,
                 Name = created.Name,
                 ImageUrl = created.ImageUrl,
-                IsActive = created.IsActive
+                IsActive = created.IsActive,
+                Message = _localizer["category_created"],
+                Key = "category_created"
             };
 
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
@@ -88,11 +96,28 @@ namespace RestoFlow.Controllers
                 return NotFound(new ErrorResponseDto { Message = _localizer["category_not_found"], Key = "category_not_found" });
             }
 
+            var existingByName = await _service.GetByNameAsync(request.Name);
+            if (existingByName != null && existingByName.Id != id)
+            {
+                return Conflict(new ErrorResponseDto { Message = _localizer["category_name_taken"], Key = "category_name_taken" });
+            }
+
             existing.Name = request.Name;
             existing.IsActive = request.IsActive;
 
             await _service.UpdateAsync(existing, request.Image);
-            return NoContent();
+
+            var dto = new CategoryResponseDto
+            {
+                Id = existing.Id,
+                Name = existing.Name,
+                ImageUrl = existing.ImageUrl,
+                IsActive = existing.IsActive,
+                Message = _localizer["category_updated"],
+                Key = "category_updated"
+            };
+
+            return Ok(dto);
         }
 
         [HttpDelete("{id}")]
@@ -105,7 +130,7 @@ namespace RestoFlow.Controllers
             }
 
             await _service.DeleteAsync(id);
-            return NoContent();
+            return Ok(new SuccessResponseDto { Message = _localizer["category_deleted"], Key = "category_deleted" });
         }
     }
 }
