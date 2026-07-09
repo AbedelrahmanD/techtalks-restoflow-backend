@@ -171,4 +171,7 @@
   <data name="Required" xml:space="preserve">
     <value>مطلوب</value>
   </data>
+  <data name="feedback_question_already_exists" xml:space="preserve">
+    <value>سؤال التقييم موجود بالفعل</value>
+  </data>
 </root>
