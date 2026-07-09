@@ -48,5 +48,13 @@ namespace RestoFlow.Services.Implementations
             _db.FeedbackQuestions.Remove(existing);
             await _db.SaveChangesAsync();
         }
+        public async Task<bool> ExistsByQuestionAsync(string question, int? excludeId = null)
+        {
+            var normalizedQuestion = question.Trim().ToLower();
+
+            return await _db.FeedbackQuestions.AnyAsync(q =>
+                q.Question.Trim().ToLower() == normalizedQuestion &&
+                (!excludeId.HasValue || q.Id != excludeId.Value));
+        }
     }
 }

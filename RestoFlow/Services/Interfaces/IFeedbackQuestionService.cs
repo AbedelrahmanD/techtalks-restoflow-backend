@@ -9,5 +9,6 @@ namespace RestoFlow.Services.Interfaces
         Task<FeedbackQuestion> CreateAsync(FeedbackQuestion question);
         Task UpdateAsync(FeedbackQuestion question);
         Task DeleteAsync(int id);
+        Task<bool> ExistsByQuestionAsync(string question, int? excludeId = null);
     }
 }

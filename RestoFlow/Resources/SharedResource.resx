@@ -171,4 +171,7 @@
   <data name="Required" xml:space="preserve">
     <value>Required</value>
   </data>
+  <data name="feedback_question_already_exists" xml:space="preserve">
+    <value>Feedback question already exists</value>
+  </data>
 </root>

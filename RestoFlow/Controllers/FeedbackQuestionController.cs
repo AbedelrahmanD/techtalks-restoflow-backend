@@ -58,6 +58,15 @@ namespace RestoFlow.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] FeedbackQuestionCreateDto request)
         {
+            if (await _service.ExistsByQuestionAsync(request.Question))
+            {
+                return BadRequest(new ErrorResponseDto
+                {
+                    Message = _localizer["feedback_question_already_exists"],
+                    Key = "feedback_question_already_exists"
+                });
+            }
+
             var question = new FeedbackQuestion
             {
                 Question = request.Question,
@@ -84,7 +93,14 @@ namespace RestoFlow.Controllers
             {
                 return NotFound(new ErrorResponseDto { Message = _localizer["feedback_question_not_found"], Key = "feedback_question_not_found" });
             }
-
+            if (await _service.ExistsByQuestionAsync(request.Question, id))
+            {
+                return BadRequest(new ErrorResponseDto
+                {
+                    Message = _localizer["feedback_question_already_exists"],
+                    Key = "feedback_question_already_exists"
+                });
+            }
             existing.Question = request.Question;
             existing.IsActive = request.IsActive;
 
