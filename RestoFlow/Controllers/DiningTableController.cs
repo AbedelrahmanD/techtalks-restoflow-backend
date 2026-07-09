@@ -55,6 +55,8 @@ namespace RestoFlow.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DiningTableCreateDto request)
         {
+            if (await _service.TableNumberExistsAsync(request.TableNumber))
+                return Conflict(new ErrorResponseDto { Message = _localizer["table_number_duplicate"], Key = "table_number_duplicate" });
             var table = new DiningTable
             {
                 TableNumber = request.TableNumber,
@@ -81,6 +83,8 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
                 return NotFound(new ErrorResponseDto { Message = _localizer["table_not_found"], Key = "table_not_found" });
+            if (await _service.TableNumberExistsAsync(request.TableNumber, id))
+                return Conflict(new ErrorResponseDto { Message = _localizer["table_number_duplicate"], Key = "table_number_duplicate" });
 
             existing.TableNumber = request.TableNumber;
             existing.SeatingCapacity = request.SeatingCapacity;

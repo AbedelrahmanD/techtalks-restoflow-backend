@@ -9,5 +9,6 @@ namespace RestoFlow.Services.Interfaces
         Task<DiningTable> CreateAsync(DiningTable table);
         Task UpdateAsync(DiningTable table);
         Task DeleteAsync(int id);
+        Task<bool> TableNumberExistsAsync(string tableNumber, int? excludeId = null);
     }
 }
