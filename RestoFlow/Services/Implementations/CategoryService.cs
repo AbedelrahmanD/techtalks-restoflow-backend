@@ -29,6 +29,11 @@ namespace RestoFlow.Services.Implementations
             return await _db.Categories.FindAsync(id);
         }
 
+        public async Task<Category?> GetByNameAsync(string name)
+        {
+            return await _db.Categories.FirstOrDefaultAsync(c => c.Name == name);
+        }
+
         public async Task<Category> CreateAsync(Category category, IFormFile? imageFile = null)
         {
             if (imageFile != null)

@@ -153,6 +153,9 @@
   <data name="category_not_found" xml:space="preserve">
     <value>Category not found</value>
   </data>
+  <data name="category_name_taken" xml:space="preserve">
+    <value>Category name already exists</value>
+  </data>
   <data name="settings_not_found" xml:space="preserve">
     <value>Settings not found</value>
   </data>

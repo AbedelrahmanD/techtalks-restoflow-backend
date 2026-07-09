@@ -153,6 +153,9 @@
   <data name="category_not_found" xml:space="preserve">
     <value>الفئة غير موجودة</value>
   </data>
+  <data name="category_name_taken" xml:space="preserve">
+    <value>اسم الفئة مستخدم بالفعل</value>
+  </data>
   <data name="settings_not_found" xml:space="preserve">
     <value>الإعدادات غير موجودة</value>
   </data>

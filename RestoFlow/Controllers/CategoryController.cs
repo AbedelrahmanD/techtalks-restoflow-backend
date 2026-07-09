@@ -60,6 +60,12 @@ namespace RestoFlow.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CategoryCreateDto request)
         {
+            var existingByName = await _service.GetByNameAsync(request.Name);
+            if (existingByName != null)
+            {
+                return Conflict(new ErrorResponseDto { Message = _localizer["category_name_taken"], Key = "category_name_taken" });
+            }
+
             var category = new Category
             {
                 Name = request.Name,
@@ -86,6 +92,12 @@ namespace RestoFlow.Controllers
             if (existing == null)
             {
                 return NotFound(new ErrorResponseDto { Message = _localizer["category_not_found"], Key = "category_not_found" });
+            }
+
+            var existingByName = await _service.GetByNameAsync(request.Name);
+            if (existingByName != null && existingByName.Id != id)
+            {
+                return Conflict(new ErrorResponseDto { Message = _localizer["category_name_taken"], Key = "category_name_taken" });
             }
 
             existing.Name = request.Name;
