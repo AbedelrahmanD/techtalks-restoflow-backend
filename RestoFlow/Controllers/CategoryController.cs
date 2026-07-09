@@ -79,9 +79,7 @@ namespace RestoFlow.Controllers
                 Id = created.Id,
                 Name = created.Name,
                 ImageUrl = created.ImageUrl,
-                IsActive = created.IsActive,
-                Message = _localizer["category_created"],
-                Key = "category_created"
+                IsActive = created.IsActive
             };
 
             return CreatedAtAction(nameof(Get), new { id = dto.Id }, dto);
@@ -106,18 +104,7 @@ namespace RestoFlow.Controllers
             existing.IsActive = request.IsActive;
 
             await _service.UpdateAsync(existing, request.Image);
-
-            var dto = new CategoryResponseDto
-            {
-                Id = existing.Id,
-                Name = existing.Name,
-                ImageUrl = existing.ImageUrl,
-                IsActive = existing.IsActive,
-                Message = _localizer["category_updated"],
-                Key = "category_updated"
-            };
-
-            return Ok(dto);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -130,7 +117,7 @@ namespace RestoFlow.Controllers
             }
 
             await _service.DeleteAsync(id);
-            return Ok(new SuccessResponseDto { Message = _localizer["category_deleted"], Key = "category_deleted" });
+            return NoContent();
         }
     }
 }

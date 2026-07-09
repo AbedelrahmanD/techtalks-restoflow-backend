@@ -156,15 +156,6 @@
   <data name="category_name_taken" xml:space="preserve">
     <value>Category name already exists</value>
   </data>
-  <data name="category_created" xml:space="preserve">
-    <value>Category created successfully</value>
-  </data>
-  <data name="category_updated" xml:space="preserve">
-    <value>Category updated successfully</value>
-  </data>
-  <data name="category_deleted" xml:space="preserve">
-    <value>Category deleted successfully</value>
-  </data>
   <data name="settings_not_found" xml:space="preserve">
     <value>Settings not found</value>
   </data>
