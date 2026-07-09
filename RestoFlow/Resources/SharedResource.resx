@@ -177,4 +177,7 @@
   <data name="feedback_question_already_exists" xml:space="preserve">
     <value>Feedback question already exists</value>
   </data>
+  <data name="table_number_duplicate" xml:space="preserve">
+    <value>A table with this number already exists</value>
+  </data>
 </root>

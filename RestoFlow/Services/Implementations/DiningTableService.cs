@@ -47,5 +47,20 @@ namespace RestoFlow.Services.Implementations
             _db.Tables.Remove(existing);
             await _db.SaveChangesAsync();
         }
+        public async Task<bool> TableNumberExistsAsync(string tableNumber, int? excludeId = null)
+        {
+            if (string.IsNullOrWhiteSpace(tableNumber))
+                return false;
+
+            var normalized = tableNumber.Trim().ToLower();
+
+            var query = _db.Tables.AsNoTracking()
+                .Where(t => t.TableNumber.Trim().ToLower() == normalized);
+
+            if (excludeId.HasValue)
+                query = query.Where(t => t.Id != excludeId.Value);
+
+            return await query.AnyAsync();
+        }
     }
 }

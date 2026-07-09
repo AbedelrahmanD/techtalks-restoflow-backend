@@ -177,4 +177,7 @@
   <data name="feedback_question_already_exists" xml:space="preserve">
     <value>سؤال التقييم موجود بالفعل</value>
   </data>
+  <data name="table_number_duplicate" xml:space="preserve">
+    <value>يوجد طاولة أخرى بنفس الرقم</value>
+  </data>
 </root>
