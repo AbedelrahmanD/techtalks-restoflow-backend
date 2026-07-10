@@ -28,15 +28,19 @@ namespace RestoFlow.Controllers
         public async Task<IActionResult> GetAll()
         {
             var users = await _service.GetAllAsync();
-            var dto = users.Select(u => new UserResponseDto
+            var dto = users.Select(user => new UserResponseDto
             {
-                Id = u.Id,
-                Username = u.Username,
-                CreatedAt = u.CreatedAt,
-                UpdatedAt = u.UpdatedAt,
-                Role = u.Role,
-                Email = u.Email,
-                Phone = u.Phone
+                Id = user.Id,
+                Username = user.Username,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                Role = new RoleResponseDto
+                {
+                    id = (int)user.Role,
+                    role = user.Role.ToString()
+                },
+                Email = user.Email,
+                Phone = user.Phone
             });
 
             return Ok(dto);
@@ -56,7 +60,11 @@ namespace RestoFlow.Controllers
                 Username = user.Username,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
-                Role = user.Role,
+                Role = new RoleResponseDto
+                {
+                    id = (int)user.Role,
+                    role = user.Role.ToString()
+                },
                 Email = user.Email,
                 Phone = user.Phone
             };
@@ -99,7 +107,11 @@ namespace RestoFlow.Controllers
                 Username = created.Username,
                 CreatedAt = created.CreatedAt,
                 UpdatedAt = created.UpdatedAt,
-                Role = created.Role,
+                Role = new RoleResponseDto
+                {
+                    id = (int)created.Role,
+                    role = created.Role.ToString()
+                },
                 Email = created.Email,
                 Phone = created.Phone
             };
@@ -133,10 +145,10 @@ namespace RestoFlow.Controllers
                 if (!string.IsNullOrWhiteSpace(newEmail))
                 {
                     var otherByEmail = await _service.GetByEmailAsync(newEmail!);
-                        if (otherByEmail != null && otherByEmail.Id != id)
-                        {
-                            return Conflict(new ErrorResponseDto { Message = _localizer["email_taken"], Key = "email_taken" });
-                        }
+                    if (otherByEmail != null && otherByEmail.Id != id)
+                    {
+                        return Conflict(new ErrorResponseDto { Message = _localizer["email_taken"], Key = "email_taken" });
+                    }
                 }
             }
 

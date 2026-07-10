@@ -12,12 +12,23 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using RestoFlow;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Localization: point to Resources folder
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
+var allowed = new[] { "http://localhost:4200" };
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.WithOrigins(allowed)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -27,6 +38,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IFeedbackQuestionService, FeedbackQuestionService>();
 builder.Services.AddScoped<IRefreshTokenService, RestoFlow.Services.Implementations.RefreshTokenService>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,12 +71,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
-
 builder.Services.AddAuthorization();
 builder.Services.AddControllers()
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(SharedResource)));
+
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
@@ -77,7 +88,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// Configure supported cultures and request localization
+// Static Serve Configuration for Uploads
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "Uploads");
+if (!Directory.Exists(uploadsPath)) Directory.CreateDirectory(uploadsPath);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/Uploads"
+});
+
 var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ar") };
 var localizationOptions = new RequestLocalizationOptions
 {
@@ -85,8 +105,9 @@ var localizationOptions = new RequestLocalizationOptions
     SupportedCultures = supportedCultures.ToList(),
     SupportedUICultures = supportedCultures.ToList()
 };
-
 app.UseRequestLocalization(localizationOptions);
+
+app.UseCors("CorsPolicy");
 
 if (app.Environment.IsDevelopment())
 {
@@ -98,11 +119,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
