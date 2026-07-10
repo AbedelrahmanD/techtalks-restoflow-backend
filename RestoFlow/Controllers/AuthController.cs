@@ -58,7 +58,7 @@ namespace RestoFlow.Controllers
                 Expires = rt.Expires
             };
             Response.Cookies.Append(RefreshCookieName, rt.Token, cookieOptions);
-          
+
             var accessCookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -74,7 +74,11 @@ namespace RestoFlow.Controllers
                 Username = user.Username,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
-                Role = user.Role,
+                Role = new RoleResponseDto
+                {
+                    id = (int)user.Role,
+                    role = user.Role.ToString()
+                },
                 Email = user.Email,
                 Phone = user.Phone
             };
@@ -122,7 +126,7 @@ namespace RestoFlow.Controllers
 
             var access = _tokenService.GenerateToken(user.Id.ToString(), user.Role.ToString());
 
-            
+
             var accessCookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -138,7 +142,12 @@ namespace RestoFlow.Controllers
                 Username = user.Username,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt,
-                Role = user.Role,
+                Role = new RoleResponseDto
+                {
+                    id = (int)user.Role,
+                    role = user.Role.ToString()
+                },
+
                 Email = user.Email,
                 Phone = user.Phone
             };

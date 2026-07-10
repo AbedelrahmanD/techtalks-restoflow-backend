@@ -6,7 +6,6 @@ namespace RestoFlow.Dtos.Requests
     public class UserCreateDto
     {
         [Required(ErrorMessage = "Required")]
-        [StringLength(100, MinimumLength = 3)]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Required")]
@@ -22,6 +21,6 @@ namespace RestoFlow.Dtos.Requests
         public string? Phone { get; set; }
 
         [Required(ErrorMessage = "Required")]
-         public Role Role { get; set; }
+        public Role Role { get; set; }
     }
 }
