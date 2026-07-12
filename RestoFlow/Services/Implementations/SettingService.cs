@@ -3,17 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using RestoFlow.Data;
 using RestoFlow.Models;
 using RestoFlow.Services.Interfaces;
-using RestoFlow.Helpers;
 
 namespace RestoFlow.Services.Implementations
 {
     public class SettingService : ISettingService
     {
         private readonly AppDbContext _db;
+        private readonly IFileService _fileService;
 
-        public SettingService(AppDbContext db)
+        public SettingService(AppDbContext db, IFileService fileService)
         {
             _db = db;
+            _fileService = fileService;
         }
 
         public async Task<Setting?> GetAsync()
@@ -29,7 +30,7 @@ namespace RestoFlow.Services.Implementations
                 var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Settings");
                 var allowed = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                 var maxBytes = 2 * 1024 * 1024; // 2 MB
-                var saved = await FileHelper.SaveFileAsync(logoFile, uploadsRoot, allowed, maxBytes);
+                var saved = await _fileService.SaveFileAsync(logoFile, uploadsRoot, allowed, maxBytes);
                 if (!string.IsNullOrEmpty(saved))
                 {
                     // store relative path
@@ -45,6 +46,12 @@ namespace RestoFlow.Services.Implementations
             }
             else
             {
+                // If a new logo was uploaded and an old logo exists, delete the old file
+                if (!string.IsNullOrEmpty(setting.LogoUrl) && !string.IsNullOrEmpty(existing.LogoUrl))
+                {
+                   await _fileService.RemoveFileAsync(existing.LogoUrl);
+                }
+
                 existing.CurrencyId = setting.CurrencyId;
                 existing.RestaurantName = setting.RestaurantName;
                 if (!string.IsNullOrEmpty(setting.LogoUrl))

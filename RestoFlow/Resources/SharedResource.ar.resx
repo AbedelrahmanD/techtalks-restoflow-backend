@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
+	<!-- 
     Microsoft ResX Schema 
     
     Version 2.0
@@ -59,125 +59,146 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="InvalidEmail" xml:space="preserve">
-    <value>عنوان البريد الإلكتروني غير صالح.</value>
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="metadata">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" />
+							</xsd:sequence>
+							<xsd:attribute name="name" use="required" type="xsd:string" />
+							<xsd:attribute name="type" type="xsd:string" />
+							<xsd:attribute name="mimetype" type="xsd:string" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="assembly">
+						<xsd:complexType>
+							<xsd:attribute name="alias" type="xsd:string" />
+							<xsd:attribute name="name" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+							<xsd:attribute ref="xml:space" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="InvalidEmail" xml:space="preserve">
+    <value> البريد الإلكتروني غير صالح.</value>
   </data>
-  <data name="user_not_found" xml:space="preserve">
+	<data name="user_not_found" xml:space="preserve">
     <value>المستخدم غير موجود</value>
   </data>
-  <data name="username_taken" xml:space="preserve">
+	<data name="username_taken" xml:space="preserve">
     <value>اسم المستخدم مستخدم بالفعل</value>
   </data>
-  <data name="email_taken" xml:space="preserve">
+	<data name="email_taken" xml:space="preserve">
     <value>البريد الإلكتروني مستخدم بالفعل</value>
   </data>
-  <data name="invalid_credentials" xml:space="preserve">
+	<data name="invalid_credentials" xml:space="preserve">
     <value>بيانات اعتماد غير صالحة</value>
   </data>
-  <data name="refresh_missing" xml:space="preserve">
+	<data name="refresh_missing" xml:space="preserve">
     <value>رمز التحديث مفقود</value>
   </data>
-  <data name="invalid_refresh" xml:space="preserve">
+	<data name="invalid_refresh" xml:space="preserve">
     <value>رمز التحديث غير صالح</value>
   </data>
-  <data name="file_save_failed" xml:space="preserve">
+	<data name="file_save_failed" xml:space="preserve">
     <value>تعذر حفظ الملف</value>
   </data>
-  <data name="server_error" xml:space="preserve">
+	<data name="server_error" xml:space="preserve">
     <value>خطأ غير متوقع</value>
   </data>
-  <data name="feedback_question_not_found" xml:space="preserve">
+	<data name="feedback_question_not_found" xml:space="preserve">
     <value>سؤال التعليقات غير موجود</value>
   </data>
-  <data name="table_not_found" xml:space="preserve">
+	<data name="table_not_found" xml:space="preserve">
     <value>الطاولة غير موجودة</value>
   </data>
-  <data name="category_not_found" xml:space="preserve">
+	<data name="category_not_found" xml:space="preserve">
     <value>الفئة غير موجودة</value>
   </data>
-  <data name="category_name_taken" xml:space="preserve">
+	<data name="category_name_taken" xml:space="preserve">
     <value>اسم الفئة مستخدم بالفعل</value>
   </data>
-  <data name="settings_not_found" xml:space="preserve">
+	<data name="settings_not_found" xml:space="preserve">
     <value>الإعدادات غير موجودة</value>
   </data>
-  <data name="file_required" xml:space="preserve">
+	<data name="file_required" xml:space="preserve">
     <value>الملف مطلوب</value>
   </data>
-  <data name="invalid_file" xml:space="preserve">
+	<data name="invalid_file" xml:space="preserve">
     <value>ملف غير صالح</value>
   </data>
-  <data name="InvalidPhone" xml:space="preserve">
+	<data name="InvalidPhone" xml:space="preserve">
     <value>رقم هاتف غير صالح</value>
   </data>
-  <data name="SeatingCapacityRange" xml:space="preserve">
+	<data name="SeatingCapacityRange" xml:space="preserve">
     <value>يجب أن تكون بين {1} و {2}</value>
   </data>
-  <data name="Required" xml:space="preserve">
+	<data name="password_length" xml:space="preserve">
+    <value>يجب أن تكون كلمة المرور بين {2} و {1} حرفًا</value>
+  </data>
+	<data name="Required" xml:space="preserve">
     <value>مطلوب</value>
   </data>
-  <data name="feedback_question_already_exists" xml:space="preserve">
+	<data name="feedback_question_already_exists" xml:space="preserve">
     <value>سؤال التقييم موجود بالفعل</value>
   </data>
-  <data name="table_number_duplicate" xml:space="preserve">
+	<data name="table_number_duplicate" xml:space="preserve">
     <value>يوجد طاولة أخرى بنفس الرقم</value>
+  </data>
+	<data name="currency_not_found" xml:space="preserve">
+    <value>العملة غير موجودة</value>
+  </data>
+	<data name="currency_code_taken" xml:space="preserve">
+    <value>رمز العملة مستخدم بالفعل</value>
+  </data>
+	<data name="invalid_extension" xml:space="preserve">
+    <value>الامتداد '{0}' غير مسموح به</value>
+  </data>
+	<data name="file_empty" xml:space="preserve">
+    <value>الملف فارغ</value>
+  </data>
+	<data name="file_too_large" xml:space="preserve">
+    <value>يتجاوز حجم الملف الحد المسموح {0} بايت</value>
+  </data>
+	<data name="saved" xml:space="preserve">
+    <value>تم الحفظ</value>
   </data>
 </root>

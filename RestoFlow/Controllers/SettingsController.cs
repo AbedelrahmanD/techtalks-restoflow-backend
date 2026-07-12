@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using RestoFlow.Services.Interfaces;
-using RestoFlow.Helpers;
 using Microsoft.Extensions.Localization;
 using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
@@ -11,7 +10,7 @@ namespace RestoFlow.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-   [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class SettingsController : ControllerBase
     {
         private readonly ISettingService _service;
@@ -27,18 +26,13 @@ namespace RestoFlow.Controllers
         public async Task<IActionResult> Get()
         {
             var settings = await _service.GetAsync();
-            if (settings == null)
-            {
-                return NotFound(new { Message = _localizer["settings_not_found"], Key = "settings_not_found" });
-            }
 
             var dto = new SettingResponseDto
             {
-                Id = settings.Id,
-                CurrencyId = settings.CurrencyId,
-                RestaurantName = settings.RestaurantName,
-                LogoUrl = settings.LogoUrl,
-                UpdatedAt = settings.UpdatedAt
+                CurrencyId = settings?.CurrencyId ?? 0,
+                RestaurantName = settings?.RestaurantName ?? "",
+                LogoUrl = settings?.LogoUrl ?? "",
+
             };
 
             return Ok(dto);
@@ -58,18 +52,22 @@ namespace RestoFlow.Controllers
             {
                 var saved = await _service.SaveAsync(model, request.Logo);
 
-                var dto = new SettingResponseDto
-                {
-                    Id = saved.Id,
-                    CurrencyId = saved.CurrencyId,
-                    RestaurantName = saved.RestaurantName,
-                    LogoUrl = saved.LogoUrl,
-                    UpdatedAt = saved.UpdatedAt
-                };
 
-                return Ok(dto);
+
+                return Ok(new
+                {
+                    Message = _localizer["saved"].Value,
+                    Settings = new SettingResponseDto
+                    {
+
+                        CurrencyId = saved.CurrencyId,
+                        RestaurantName = saved.RestaurantName,
+                        LogoUrl = saved.LogoUrl,
+
+                    }
+                });
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
                 return BadRequest(new ErrorResponseDto { Message = _localizer["file_required"], Key = "file_required" });
             }
@@ -77,7 +75,7 @@ namespace RestoFlow.Controllers
             {
                 var msg = ex.Message ?? "Invalid file";
 
-                return BadRequest(new ErrorResponseDto { Message = _localizer["invalid_file"], Key = "invalid_file" });
+                return BadRequest(new ErrorResponseDto { Message = msg, Key = "invalid_file" });
             }
             catch (IOException)
             {

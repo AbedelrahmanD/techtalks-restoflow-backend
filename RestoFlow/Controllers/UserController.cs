@@ -93,8 +93,7 @@ namespace RestoFlow.Controllers
             var user = new User
             {
                 Username = request.Username,
-                Role = request.Role
-                ,
+                Role = request.Role,
                 Email = request.Email,
                 Phone = request.Phone
             };

@@ -5,10 +5,12 @@ namespace RestoFlow.Dtos.Requests
 {
     public class SettingRequestDto
     {
-        public int? CurrencyId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Required")]
+        [Required(ErrorMessage = "Required")]
+        public int CurrencyId { get; set; }
 
-        [StringLength(200)]
-        public string? RestaurantName { get; set; }
+        [Required(ErrorMessage = "Required")]
+        public string RestaurantName { get; set; }
 
         public IFormFile? Logo { get; set; }
     }
