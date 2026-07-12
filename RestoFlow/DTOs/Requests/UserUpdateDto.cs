@@ -10,7 +10,7 @@ namespace RestoFlow.Dtos.Requests
         public string Username { get; set; }
 
         // Password optional for updates; leave empty to keep existing password
-        [StringLength(100, MinimumLength = 6)]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "password_length")]
         public string? Password { get; set; }
 
         [Required(ErrorMessage = "Required")]

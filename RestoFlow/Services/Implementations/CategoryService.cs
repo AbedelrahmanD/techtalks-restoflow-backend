@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RestoFlow.Data;
-using RestoFlow.Helpers;
+using RestoFlow.Services.Interfaces;
 using RestoFlow.Models;
 using RestoFlow.Services.Interfaces;
 
@@ -13,10 +13,12 @@ namespace RestoFlow.Services.Implementations
         private const long MaxImageBytes = 2 * 1024 * 1024; // 2 MB
 
         private readonly AppDbContext _db;
+        private readonly IFileService _fileService;
 
-        public CategoryService(AppDbContext db)
+        public CategoryService(AppDbContext db, IFileService fileService)
         {
             _db = db;
+            _fileService = fileService;
         }
 
         public async Task<IEnumerable<Category>> GetAllAsync()
@@ -57,10 +59,10 @@ namespace RestoFlow.Services.Implementations
             await _db.SaveChangesAsync();
         }
 
-        private static async Task<string> SaveImageAsync(IFormFile imageFile)
+        private async Task<string> SaveImageAsync(IFormFile imageFile)
         {
             var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Categories");
-            var saved = await FileHelper.SaveFileAsync(imageFile, uploadsRoot, AllowedImageExtensions, MaxImageBytes);
+            var saved = await _fileService.SaveFileAsync(imageFile, uploadsRoot, AllowedImageExtensions, MaxImageBytes);
             return Path.Combine("Uploads", "Categories", saved).Replace('\\', '/');
         }
 
