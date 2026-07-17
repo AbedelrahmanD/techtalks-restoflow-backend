@@ -49,7 +49,25 @@ namespace RestoFlow.Data
                 .Property(oi => oi.UnitPrice)
                 .HasPrecision(10, 2);
 
+            modelBuilder.Entity<FeedbackSession>()
+    .HasMany(session => session.Responses)
+    .WithOne(response => response.FeedbackSession)
+    .HasForeignKey(response => response.FeedbackSessionId)
+    .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<FeedbackResponse>()
+                .HasOne(response => response.Question)
+                .WithMany()
+                .HasForeignKey(response => response.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<FeedbackResponse>()
+                .HasIndex(response => new
+                {
+                    response.FeedbackSessionId,
+                    response.QuestionId
+                })
+                .IsUnique();
 
             var DefaultPasswordHash = "$2a$11$iRectLPBh18dzcNU9eq7FeU2Bt54RyHThvmg67i6rRXbKHR0W6hni";//Password123!
             modelBuilder.Entity<User>().HasData(
