@@ -40,6 +40,7 @@ builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFeedbackQuestionService, FeedbackQuestionService>();
+builder.Services.AddScoped<IFeedbackSessionService, FeedbackSessionService>();
 builder.Services.AddScoped<IRefreshTokenService, RestoFlow.Services.Implementations.RefreshTokenService>();
 
 builder.Services.AddAuthentication(options =>
