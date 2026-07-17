@@ -17,9 +17,20 @@ namespace RestoFlow.Services.Implementations
             _fileService = fileService;
         }
 
-        public async Task<Setting?> GetAsync()
+        public async Task<Setting> GetAsync()
         {
-            return await _db.Settings.AsNoTracking().FirstOrDefaultAsync();
+            var settings = await _db.Settings.AsNoTracking()
+                .Include(settings => settings.Currency)
+                .FirstOrDefaultAsync();
+
+            if (settings is null)
+            {
+                settings = new Setting();
+                settings.Currency = new Currency();
+
+            }
+
+            return settings;
         }
 
         public async Task<Setting> SaveAsync(Setting setting, IFormFile? logoFile = null)
@@ -49,7 +60,7 @@ namespace RestoFlow.Services.Implementations
                 // If a new logo was uploaded and an old logo exists, delete the old file
                 if (!string.IsNullOrEmpty(setting.LogoUrl) && !string.IsNullOrEmpty(existing.LogoUrl))
                 {
-                   await _fileService.RemoveFileAsync(existing.LogoUrl);
+                    await _fileService.RemoveFileAsync(existing.LogoUrl);
                 }
 
                 existing.CurrencyId = setting.CurrencyId;
@@ -63,7 +74,7 @@ namespace RestoFlow.Services.Implementations
 
             await _db.SaveChangesAsync();
 
-            return existing ?? setting;
+            return await GetAsync();
         }
     }
 }

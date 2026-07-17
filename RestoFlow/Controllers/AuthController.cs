@@ -4,8 +4,6 @@ using RestoFlow.Dtos.Responses;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Http;
 
 namespace RestoFlow.Controllers
 {

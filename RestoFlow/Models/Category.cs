@@ -7,6 +7,6 @@ namespace RestoFlow.Models
         public string? ImageUrl { get; set; }
         public bool IsActive { get; set; } = true;
 
-        public ICollection<MenuItem>? MenuItems { get; set; }
+        public ICollection<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
     }
 }
