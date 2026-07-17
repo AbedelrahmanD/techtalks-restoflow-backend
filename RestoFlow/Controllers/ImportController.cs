@@ -116,7 +116,7 @@ public class ImportController : ControllerBase
                     Name = meal.strMeal,
                     Description = meal.strInstructions,
                     Price = 12.99m, // Default generic price
-                    ImageUrl = menuItemImageFilename != null ? $"/Uploads/MenuItems/{menuItemImageFilename}" : null,
+                    ImageUrl = menuItemImageFilename != null ? $"Uploads/MenuItems/{menuItemImageFilename}" : null,
                     IsActive = true
                 };
 
@@ -126,7 +126,7 @@ public class ImportController : ControllerBase
             // 5. Assign the Category image if we found one
             if (categoryImageFilename != null && string.IsNullOrEmpty(category.ImageUrl))
             {
-                category.ImageUrl = $"/Uploads/Categories/{categoryImageFilename}";
+                category.ImageUrl = $"Uploads/Categories/{categoryImageFilename}";
                 _db.Categories.Update(category);
             }
 
