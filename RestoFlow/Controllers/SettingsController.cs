@@ -29,9 +29,9 @@ namespace RestoFlow.Controllers
 
             var dto = new SettingResponseDto
             {
-                CurrencyId = settings?.CurrencyId ?? 0,
-                RestaurantName = settings?.RestaurantName ?? "",
-                LogoUrl = settings?.LogoUrl ?? "",
+                Currency = settings.Currency,
+                RestaurantName = settings.RestaurantName,
+                LogoUrl = settings.LogoUrl,
 
             };
 
@@ -52,20 +52,17 @@ namespace RestoFlow.Controllers
             {
                 var saved = await _service.SaveAsync(model, request.Logo);
 
-
-
-                return Ok(new
-                {
-                    Message = _localizer["saved"].Value,
-                    Settings = new SettingResponseDto
-                    {
-
-                        CurrencyId = saved.CurrencyId,
-                        RestaurantName = saved.RestaurantName,
-                        LogoUrl = saved.LogoUrl,
-
-                    }
+                return Ok(new ApiResponseDto { 
+                        Message = _localizer["saved"],
+                        Data = new SettingResponseDto
+                        {
+                            Currency = saved.Currency,
+                            RestaurantName = saved.RestaurantName,
+                            LogoUrl = saved.LogoUrl,
+                        }
                 });
+
+                
             }
             catch (ArgumentNullException)
             {

@@ -15,7 +15,7 @@ using RestoFlow;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddHttpClient();
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var allowed = new[] { "http://localhost:4200" };
@@ -37,6 +37,7 @@ builder.Services.AddScoped<IDiningTableService, DiningTableService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFeedbackQuestionService, FeedbackQuestionService>();
 builder.Services.AddScoped<IRefreshTokenService, RestoFlow.Services.Implementations.RefreshTokenService>();
@@ -72,7 +73,6 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
 builder.Services.AddAuthorization();
 builder.Services.AddControllers()
     .AddDataAnnotationsLocalization(options =>

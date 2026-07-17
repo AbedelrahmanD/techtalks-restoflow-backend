@@ -5,7 +5,7 @@ namespace RestoFlow.Services.Interfaces
 {
     public interface ISettingService
     {
-        Task<Setting?> GetAsync();
+        Task<Setting> GetAsync();
         Task<Setting> SaveAsync(Setting setting, IFormFile? logoFile = null);
     }
 }
