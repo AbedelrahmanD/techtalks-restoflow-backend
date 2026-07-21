@@ -210,4 +210,10 @@
   <data name="feedback_question_inactive" xml:space="preserve">
     <value>One or more feedback questions are inactive</value>
   </data>
+  <data name="order_not_found" xml:space="preserve">
+    <value>Order not found</value>
+  </data>
+  <data name="invalid_order_status" xml:space="preserve">
+    <value>Invalid order status</value>
+  </data>
 </root>

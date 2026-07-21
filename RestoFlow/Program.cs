@@ -6,6 +6,7 @@ using RestoFlow.Services;
 using RestoFlow.Services.Interfaces;
 using RestoFlow.Services.Implementations;
 using RestoFlow.OpenApi;
+using RestoFlow.Hubs;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using System.Text;
@@ -30,6 +31,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSignalR();
+
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
@@ -42,6 +45,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFeedbackQuestionService, FeedbackQuestionService>();
 builder.Services.AddScoped<IFeedbackSessionService, FeedbackSessionService>();
 builder.Services.AddScoped<IRefreshTokenService, RestoFlow.Services.Implementations.RefreshTokenService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -70,6 +74,16 @@ builder.Services.AddAuthentication(options =>
             {
                 context.Token = cookieToken;
             }
+
+            // SignalR sends the websocket handshake as a plain GET with no way to attach
+            // a header, so the JS client passes the token via a query string param instead.
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+            {
+                context.Token = accessToken;
+            }
+
             return Task.CompletedTask;
         }
     };
@@ -125,4 +139,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<OrderHub>("/hubs/orders").RequireCors("CorsPolicy");
 app.Run();

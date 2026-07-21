@@ -210,4 +210,10 @@
   <data name="feedback_question_inactive" xml:space="preserve">
     <value>سؤال واحد أو أكثر من أسئلة التقييم غير فعال</value>
   </data>
+  <data name="order_not_found" xml:space="preserve">
+    <value>الطلب غير موجود</value>
+  </data>
+  <data name="invalid_order_status" xml:space="preserve">
+    <value>حالة الطلب غير صالحة</value>
+  </data>
 </root>
