@@ -75,14 +75,7 @@ builder.Services.AddAuthentication(options =>
                 context.Token = cookieToken;
             }
 
-            // SignalR sends the websocket handshake as a plain GET with no way to attach
-            // a header, so the JS client passes the token via a query string param instead.
-            var accessToken = context.Request.Query["access_token"];
-            var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-            {
-                context.Token = accessToken;
-            }
+            
 
             return Task.CompletedTask;
         }
