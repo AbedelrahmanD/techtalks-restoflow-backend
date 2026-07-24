@@ -24,6 +24,12 @@ namespace RestoFlow.Services.Implementations
             return await _db.Tables.FindAsync(id);
         }
 
+        public async Task<DiningTable?> GetByQrCodeTokenAsync(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return null;
+            return await _db.Tables.FirstOrDefaultAsync(t => t.QrCodeToken == token);
+        }
+
         public async Task<DiningTable> CreateAsync(DiningTable table)
         {
            
