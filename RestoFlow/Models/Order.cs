@@ -5,7 +5,7 @@ namespace RestoFlow.Models
         public int Id { get; set; }
         public int TableId { get; set; }
         public DiningTable? Table { get; set; }
-        public string Status { get; set; } = "New";
+        public string Status { get; set; } = "New";//New,InProgress,Served,Paid,Voided
         public decimal TotalAmount { get; set; } = 0m;
         public int CurrencyId { get; set; }
         public Currency? Currency { get; set; }

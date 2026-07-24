@@ -6,6 +6,7 @@ namespace RestoFlow.Services.Interfaces
     {
         Task<IEnumerable<DiningTable>> GetAllAsync();
         Task<DiningTable?> GetByIdAsync(int id);
+        Task<DiningTable?> GetByQrCodeTokenAsync(string token);
         Task<DiningTable> CreateAsync(DiningTable table);
         Task UpdateAsync(DiningTable table);
         Task DeleteAsync(int id);
