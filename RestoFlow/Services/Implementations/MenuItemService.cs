@@ -36,6 +36,11 @@ namespace RestoFlow.Services.Implementations
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
+        public async Task<MenuItem?> GetByNameAsync(string name)
+        {
+            return await _db.MenuItems.FirstOrDefaultAsync(m => m.Name == name);
+        }
+
         public async Task<MenuItem> CreateAsync(MenuItem menuItem, IFormFile? imageFile = null)
         {
             if (imageFile != null)

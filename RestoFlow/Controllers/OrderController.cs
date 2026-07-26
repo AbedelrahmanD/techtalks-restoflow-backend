@@ -48,10 +48,10 @@ namespace RestoFlow.Controllers
             var table = await _tableService.GetByQrCodeTokenAsync(qrCodeToken);
             if (table == null)
             {
-                return NotFound(new ErrorResponseDto 
-                { 
-                    Message = _localizer["table_not_found"], 
-                    Key = "table_not_found" 
+                return NotFound(new ErrorResponseDto
+                {
+                    Message = _localizer["table_not_found"],
+                    Key = "table_not_found"
                 });
             }
 
@@ -137,7 +137,7 @@ namespace RestoFlow.Controllers
 
             var created = await _service.CreateAsync(order);
             var dto = MapToDto(created);
-           
+
 
             // Also send to kitchen staff for their display
             await _hub.Clients.Group("kitchen").SendAsync("OrderUpdated", dto);
@@ -163,7 +163,9 @@ namespace RestoFlow.Controllers
                     MenuItemName = i.MenuItem?.Name ?? string.Empty,
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice,
-                    Note = i.Note
+                    Note = i.Note,
+                    Image = i?.MenuItem?.ImageUrl
+
                 }).ToList() ?? new List<OrderItemResponseDto>()
             };
         }

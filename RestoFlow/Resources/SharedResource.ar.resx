@@ -177,6 +177,9 @@
   <data name="Required" xml:space="preserve">
     <value>مطلوب</value>
   </data>
+  <data name="StringMaxLength" xml:space="preserve">
+    <value>الحد الأقصى للطول هو {1} حرفًا</value>
+  </data>
   <data name="feedback_question_already_exists" xml:space="preserve">
     <value>سؤال التقييم موجود بالفعل</value>
   </data>
@@ -215,5 +218,11 @@
   </data>
   <data name="invalid_order_status" xml:space="preserve">
     <value>حالة الطلب غير صالحة</value>
+  </data>
+  <data name="menuitem_not_found" xml:space="preserve">
+    <value>عنصر القائمة غير موجود</value>
+  </data>
+  <data name="menuitem_name_taken" xml:space="preserve">
+    <value>اسم عنصر القائمة مستخدم بالفعل</value>
   </data>
 </root>

@@ -4,6 +4,7 @@ using RestoFlow.Dtos.Requests;
 using RestoFlow.Dtos.Responses;
 using RestoFlow.Models;
 using RestoFlow.Services.Interfaces;
+using Microsoft.Extensions.Localization;
 
 namespace RestoFlow.Controllers
 {
@@ -12,10 +13,12 @@ namespace RestoFlow.Controllers
     public class MenuItemsController : ControllerBase
     {
         private readonly IMenuItemService _service;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public MenuItemsController(IMenuItemService service)
+        public MenuItemsController(IMenuItemService service, IStringLocalizer<SharedResource> localizer)
         {
             _service = service;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -43,7 +46,7 @@ namespace RestoFlow.Controllers
             var item = await _service.GetByIdAsync(id);
             if (item == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Menu item not found", Key = "menuitem_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["menuitem_not_found"], Key = "menuitem_not_found" });
             }
 
             var dto = new MenuItemDto
@@ -65,6 +68,12 @@ namespace RestoFlow.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromForm] CreateMenuItemDto request)
         {
+            var existingByName = await _service.GetByNameAsync(request.Name);
+            if (existingByName != null)
+            {
+                return Conflict(new ErrorResponseDto { Message = _localizer["menuitem_name_taken"], Key = "menuitem_name_taken" });
+            }
+
             var menuItem = new MenuItem
             {
                 CategoryId = request.CategoryId,
@@ -98,7 +107,13 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Menu item not found", Key = "menuitem_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["menuitem_not_found"], Key = "menuitem_not_found" });
+            }
+
+            var existingByName = await _service.GetByNameAsync(request.Name);
+            if (existingByName != null && existingByName.Id != id)
+            {
+                return Conflict(new ErrorResponseDto { Message = _localizer["menuitem_name_taken"], Key = "menuitem_name_taken" });
             }
 
             existing.CategoryId = request.CategoryId;
@@ -118,7 +133,7 @@ namespace RestoFlow.Controllers
             var existing = await _service.GetByIdAsync(id);
             if (existing == null)
             {
-                return NotFound(new ErrorResponseDto { Message = "Menu item not found", Key = "menuitem_not_found" });
+                return NotFound(new ErrorResponseDto { Message = _localizer["menuitem_not_found"], Key = "menuitem_not_found" });
             }
 
             await _service.DeleteAsync(id);

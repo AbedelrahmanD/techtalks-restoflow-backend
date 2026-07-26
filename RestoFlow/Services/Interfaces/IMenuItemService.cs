@@ -7,6 +7,7 @@ namespace RestoFlow.Services.Interfaces
     {
         Task<IEnumerable<MenuItem>> GetAllAsync();
         Task<MenuItem?> GetByIdAsync(int id);
+        Task<MenuItem?> GetByNameAsync(string name);
         Task<MenuItem> CreateAsync(MenuItem menuItem, IFormFile? imageFile = null);
         Task UpdateAsync(MenuItem menuItem, IFormFile? imageFile = null);
         Task DeleteAsync(int id);
