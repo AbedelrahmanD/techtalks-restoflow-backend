@@ -75,7 +75,7 @@ builder.Services.AddAuthentication(options =>
                 context.Token = cookieToken;
             }
 
-            
+
 
             return Task.CompletedTask;
         }
@@ -108,13 +108,16 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/Uploads"
 });
 
-var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ar") };
+var supportedUICultures = new[] { new CultureInfo("en"), new CultureInfo("ar") };
 var localizationOptions = new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture("en"),
-    SupportedCultures = supportedCultures.ToList(),
-    SupportedUICultures = supportedCultures.ToList()
+    // Use InvariantCulture for number/date parsing to ensure consistent API behavior
+    SupportedCultures = new List<CultureInfo> { CultureInfo.InvariantCulture },
+    // Use en/ar for UI messages (error messages, validation messages)
+    SupportedUICultures = supportedUICultures.ToList()
 };
+
 app.UseRequestLocalization(localizationOptions);
 
 app.UseCors("CorsPolicy");
