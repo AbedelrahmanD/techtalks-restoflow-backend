@@ -1,5 +1,5 @@
 ﻿using RestoFlow.Models;
-
+using RestoFlow.Dtos.Responses;
 namespace RestoFlow.Services.Interfaces
 {
     public interface IFeedbackSessionService
@@ -13,5 +13,6 @@ namespace RestoFlow.Services.Interfaces
         Task<bool> QuestionsExistAsync(IEnumerable<int> questionIds);
 
         Task<bool> QuestionsAreActiveAsync(IEnumerable<int> questionIds);
+        Task<FeedbackReportResponseDto> GetReportAsync();
     }
 }
